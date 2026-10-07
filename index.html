@@ -1,0 +1,344 @@
+<title>F&amp;A Hospitality Calculators</title>
+<meta name="description" content="Free UK calculators for hospitality businesses: VAT, gross profit and prime cost, and payroll cost for 2026/27. From F&A Accountants.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: navy hero band with tab switcher, then a two-column calculator (inputs left, results right) that stacks on phones. F&A brand tokens. */
+:root{
+  --navy:#123560; --navy-dark:#0A1E38; --navy-light:#1C4880;
+  --orange:#E96C20; --orange-hover:#D55D15; --orange-soft:#FFF5EE;
+  --teal:#00B67A; --warn:#C2410C;
+  --bg:#F8FAFC; --surface:#FFFFFF; --ink:#1E293B; --muted:#64748B; --lead:#475569;
+  --border:#E2E8F0; --field:#F8FAFC; --hero-fg:#FFFFFF; --hero-muted:#AFC0D6;
+  --shadow:0 10px 30px -12px rgba(18,53,96,.18);
+  --display:"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif;
+  --body:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0B1524; --surface:#111F33; --ink:#E2E8F0; --muted:#94A3B8; --lead:#B4C2D3;
+  --border:#22344D; --field:#0D1A2C; --orange-soft:#2A1B12; --navy-dark:#07121F; --navy:#0E2A4D;
+  --teal:#2BD09A; --warn:#FB923C; --shadow:0 10px 30px -12px rgba(0,0,0,.5); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0B1524; --surface:#111F33; --ink:#E2E8F0; --muted:#94A3B8; --lead:#B4C2D3;
+  --border:#22344D; --field:#0D1A2C; --orange-soft:#2A1B12; --navy-dark:#07121F; --navy:#0E2A4D;
+  --teal:#2BD09A; --warn:#FB923C; --shadow:0 10px 30px -12px rgba(0,0,0,.5); color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.6}
+.wrap{max-width:1172px;margin:0 auto;padding-inline:24px}
+@media (max-width:640px){.wrap{padding-inline:16px}}
+
+.hero{background:linear-gradient(160deg,var(--navy-dark),var(--navy));color:var(--hero-fg);padding-block:56px 0}
+.eyebrow{font-size:12.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--orange)}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(32px,5vw,48px);line-height:1.12;letter-spacing:-1.3px;margin:10px 0 12px;text-wrap:balance;max-width:20ch}
+.hero p{color:var(--hero-muted);font-size:16.8px;max-width:60ch;margin:0}
+.tabs{display:flex;gap:6px;margin-top:36px;overflow-x:auto}
+.tab{appearance:none;border:0;cursor:pointer;font:600 15px/1 var(--body);padding:16px 22px;border-radius:12px 12px 0 0;
+  background:rgba(255,255,255,.07);color:var(--hero-muted);white-space:nowrap;transition:background .3s var(--ease),color .3s var(--ease)}
+.tab:hover{color:#fff;background:rgba(255,255,255,.13)}
+.tab[aria-selected="true"]{background:var(--bg);color:var(--ink)}
+.tab:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+
+main{padding-block:40px 72px}
+.calc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:32px;align-items:start}
+@media (max-width:860px){.calc{grid-template-columns:1fr}}
+h2{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.6px;margin:0 0 6px;line-height:1.2}
+.intro{color:var(--lead);margin:0 0 24px;max-width:56ch}
+.fields{display:grid;gap:18px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:480px){.row2{grid-template-columns:1fr}}
+label{display:block;font-weight:600;font-size:13.5px;margin-bottom:6px}
+.hint{font-weight:400;color:var(--muted);font-size:12.5px}
+.money{position:relative}
+.money span{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:500;pointer-events:none}
+input,select{width:100%;font:500 16px var(--body);color:var(--ink);background:var(--field);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-variant-numeric:tabular-nums;transition:border-color .2s}
+.money input{padding-left:30px}
+input:hover,select:hover{border-color:var(--muted)}
+.seg{display:flex;background:var(--field);border:1px solid var(--border);border-radius:10px;padding:4px;gap:4px;flex-wrap:wrap}
+.seg button{flex:1;appearance:none;border:0;background:transparent;color:var(--muted);font:600 14px var(--body);padding:9px 10px;border-radius:7px;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(18,53,96,.15)}
+.check{display:flex;gap:10px;align-items:flex-start;font-weight:500;font-size:14px;cursor:pointer}
+.check input{width:18px;height:18px;margin-top:2px;accent-color:var(--orange);flex:none}
+
+.result{background:var(--surface);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+.headline{padding:26px 28px 22px;border-bottom:1px solid var(--border)}
+.headline .lbl{font-size:12.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
+.big{font-family:var(--display);font-weight:800;font-size:clamp(36px,6vw,46px);letter-spacing:-1.2px;line-height:1.1;margin-top:6px;font-variant-numeric:tabular-nums}
+.sub{color:var(--lead);font-size:14px;margin-top:4px}
+.lines{list-style:none;margin:0;padding:10px 28px 18px}
+.lines li{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px dashed var(--border);font-variant-numeric:tabular-nums}
+.lines li:last-child{border-bottom:0}
+.lines li b{font-weight:600}
+.lines li.total{border-top:1px solid var(--ink);border-bottom:0;margin-top:4px;font-weight:700}
+.lines li.total span:first-child{font-family:var(--display)}
+.lines .neg{color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--border)}
+.kpi{background:var(--surface);padding:18px 22px}
+.kpi .v{font-family:var(--display);font-weight:800;font-size:28px;letter-spacing:-.6px;font-variant-numeric:tabular-nums}
+.kpi .n{font-size:13px;color:var(--muted);font-weight:500}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;margin-top:6px}
+.pill.good{background:color-mix(in srgb,var(--teal) 15%,transparent);color:var(--teal)}
+.pill.watch{background:color-mix(in srgb,var(--warn) 15%,transparent);color:var(--warn)}
+.pill.none{background:var(--field);color:var(--muted)}
+.note{margin:0;padding:16px 28px 22px;background:var(--orange-soft);font-size:13.5px;color:var(--lead);border-top:1px solid var(--border)}
+.note strong{color:var(--ink)}
+.bar{height:10px;border-radius:999px;background:var(--field);border:1px solid var(--border);overflow:hidden;margin:0 28px 6px;display:flex}
+.bar i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin:8px 28px 4px;font-size:12.5px;color:var(--muted)}
+.legend span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;background:var(--c)}
+
+.cta{margin-top:56px;background:var(--orange-soft);border:1px solid var(--border);border-radius:18px;padding:28px 32px;display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.cta h3{font-family:var(--display);font-size:21px;font-weight:800;margin:0 0 4px;letter-spacing:-.4px}
+.cta p{margin:0;color:var(--lead);max-width:58ch}
+.btn{display:inline-block;background:var(--orange);color:#fff;text-decoration:none;font:600 15.5px var(--body);padding:13px 28px;border-radius:10px;box-shadow:0 4px 12px rgba(233,108,32,.2);transition:background .3s var(--ease)}
+.btn:hover{background:var(--orange-hover)}
+.small{font-size:12.5px;color:var(--muted);margin-top:28px;max-width:80ch}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">F&amp;A Accountants · Free tools</div>
+    <h1>Hospitality calculators for UK restaurants, pubs and cafés</h1>
+    <p>Work out VAT, gross profit and prime cost, or the real cost of a new hire. Figures use the 2026/27 UK tax year rates.</p>
+    <div class="tabs" role="tablist" aria-label="Calculators">
+      <button class="tab" role="tab" id="tab-vat" aria-controls="vat" data-t="vat">VAT calculator</button>
+      <button class="tab" role="tab" id="tab-gp" aria-controls="gp" data-t="gp">GP% &amp; prime cost</button>
+      <button class="tab" role="tab" id="tab-payroll" aria-controls="payroll" data-t="payroll">Payroll cost</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- VAT -->
+<section id="vat" role="tabpanel" aria-labelledby="tab-vat" class="calc">
+  <div>
+    <h2>VAT calculator</h2>
+    <p class="intro">Add VAT to a net price, or take VAT out of a menu price. Hot takeaway food and eat-in sales are 20%; cold takeaway food is usually 0%.</p>
+    <div class="fields">
+      <div>
+        <label>What do you want to do?</label>
+        <div class="seg" id="vat-mode">
+          <button type="button" data-v="remove" aria-pressed="true">Remove VAT (from gross)</button>
+          <button type="button" data-v="add" aria-pressed="false">Add VAT (to net)</button>
+        </div>
+      </div>
+      <div>
+        <label for="vat-amount" id="vat-amount-lbl">Price including VAT</label>
+        <div class="money"><span>£</span><input id="vat-amount" type="number" inputmode="decimal" min="0" step="0.01" value="14.50"></div>
+      </div>
+      <div>
+        <label for="vat-rate">VAT rate</label>
+        <select id="vat-rate">
+          <option value="20" selected>20% Standard (eat-in, hot takeaway, alcohol)</option>
+          <option value="5">5% Reduced</option>
+          <option value="0">0% Zero (most cold takeaway food)</option>
+        </select>
+      </div>
+      <div>
+        <label for="vat-qty">Quantity <span class="hint">· e.g. covers or items sold</span></label>
+        <input id="vat-qty" type="number" inputmode="numeric" min="1" step="1" value="1">
+      </div>
+    </div>
+  </div>
+  <div class="result" aria-live="polite">
+    <div class="headline"><div class="lbl">VAT amount</div><div class="big" id="vat-big">£0.00</div><div class="sub" id="vat-sub"></div></div>
+    <ul class="lines" id="vat-lines"></ul>
+    <p class="note"><strong>Tip:</strong> the same burger can carry different VAT. Eaten in, it is 20%. Taken away hot, also 20%. A cold sandwich to take away is usually 0%. Getting the till set up right protects your margin.</p>
+  </div>
+</section>
+
+<!-- GP -->
+<section id="gp" role="tabpanel" aria-labelledby="tab-gp" class="calc" hidden>
+  <div>
+    <h2>GP% and prime cost</h2>
+    <p class="intro">Enter one week or one month of figures. Use sales <em>excluding</em> VAT, since VAT is not your money.</p>
+    <div class="fields">
+      <div class="row2">
+        <div><label for="gp-fsales">Food sales <span class="hint">ex VAT</span></label><div class="money"><span>£</span><input id="gp-fsales" type="number" inputmode="decimal" min="0" value="18500"></div></div>
+        <div><label for="gp-fcost">Food purchases</label><div class="money"><span>£</span><input id="gp-fcost" type="number" inputmode="decimal" min="0" value="5920"></div></div>
+      </div>
+      <div class="row2">
+        <div><label for="gp-dsales">Drink sales <span class="hint">ex VAT</span></label><div class="money"><span>£</span><input id="gp-dsales" type="number" inputmode="decimal" min="0" value="9200"></div></div>
+        <div><label for="gp-dcost">Drink purchases</label><div class="money"><span>£</span><input id="gp-dcost" type="number" inputmode="decimal" min="0" value="2850"></div></div>
+      </div>
+      <div><label for="gp-labour">Labour cost <span class="hint">· wages, employer NI and pension, incl. tronc only if paid through payroll as wages</span></label><div class="money"><span>£</span><input id="gp-labour" type="number" inputmode="decimal" min="0" value="8900"></div></div>
+      <label class="check"><input type="checkbox" id="gp-incvat"> My sales figures include VAT at 20% (remove it for me)</label>
+    </div>
+  </div>
+  <div class="result" aria-live="polite">
+    <div class="headline"><div class="lbl">Prime cost</div><div class="big" id="gp-big">0%</div><div class="sub" id="gp-sub"></div><span class="pill none" id="gp-pill"></span></div>
+    <div class="kpis">
+      <div class="kpi"><div class="n">Food GP</div><div class="v" id="k-food">–</div><span class="pill none" id="p-food"></span></div>
+      <div class="kpi"><div class="n">Drink GP</div><div class="v" id="k-drink">–</div><span class="pill none" id="p-drink"></span></div>
+      <div class="kpi"><div class="n">Overall GP</div><div class="v" id="k-all">–</div></div>
+    </div>
+    <div style="padding-top:18px">
+      <div class="bar" id="gp-bar"></div>
+      <div class="legend"><span style="--c:var(--navy-light)">Food &amp; drink cost</span><span style="--c:var(--orange)">Labour</span><span style="--c:var(--teal)">Left for rent, bills and profit</span></div>
+    </div>
+    <ul class="lines" id="gp-lines"></ul>
+    <p class="note"><strong>Rule of thumb:</strong> many UK restaurants aim for food GP around 65–70%, drinks around 70% or more, and prime cost (food, drink and labour together) under 60–65% of sales. Your targets depend on your concept.</p>
+  </div>
+</section>
+
+<!-- Payroll -->
+<section id="payroll" role="tabpanel" aria-labelledby="tab-payroll" class="calc" hidden>
+  <div>
+    <h2>Payroll cost estimate</h2>
+    <p class="intro">See what an employee takes home and what they really cost you, with tax, National Insurance and auto-enrolment pension. 2026/27 rates, England, Wales and NI, tax code 1257L.</p>
+    <div class="fields">
+      <div>
+        <label>Pay type</label>
+        <div class="seg" id="pay-mode">
+          <button type="button" data-v="hourly" aria-pressed="true">Hourly</button>
+          <button type="button" data-v="annual" aria-pressed="false">Annual salary</button>
+        </div>
+      </div>
+      <div class="row2" id="pay-hourly">
+        <div><label for="pay-rate">Hourly rate</label><div class="money"><span>£</span><input id="pay-rate" type="number" inputmode="decimal" min="0" step="0.01" value="12.71"></div></div>
+        <div><label for="pay-hours">Hours per week</label><input id="pay-hours" type="number" inputmode="decimal" min="0" step="0.5" value="35"></div>
+      </div>
+      <div id="pay-annual" hidden>
+        <label for="pay-salary">Annual salary</label><div class="money"><span>£</span><input id="pay-salary" type="number" inputmode="decimal" min="0" step="100" value="32000"></div>
+      </div>
+      <p class="hint" id="pay-nlw" style="margin:-8px 0 0"></p>
+      <label class="check"><input type="checkbox" id="pay-pension" checked> Include workplace pension (5% employee, 3% employer, on qualifying earnings)</label>
+      <label class="check"><input type="checkbox" id="pay-ea"> We claim Employment Allowance (up to £10,500 off employer NI a year)</label>
+    </div>
+  </div>
+  <div class="result" aria-live="polite">
+    <div class="kpis">
+      <div class="kpi"><div class="n">Employee takes home</div><div class="v" id="pay-take">–</div><div class="sub" id="pay-take-m"></div></div>
+      <div class="kpi"><div class="n">Total cost to you</div><div class="v" id="pay-cost">–</div><div class="sub" id="pay-cost-m"></div></div>
+    </div>
+    <ul class="lines" id="pay-lines"></ul>
+    <p class="note"><strong>Estimate only.</strong> Assumes one job, no student loan, no benefits in kind, and pension under a net pay arrangement. Scottish rates differ. Employment Allowance is shared across your whole payroll, so this shows the most it could save on one person.</p>
+  </div>
+</section>
+
+<div class="cta">
+  <div>
+    <h3>Want these numbers to look better?</h3>
+    <p>F&amp;A Accountants work with hospitality businesses on VAT, GP, payroll and tronc every week. Talk to a specialist about your figures.</p>
+  </div>
+  <a class="btn" href="https://faaccountants.com/hospitality-accounting-services/" target="_blank" rel="noopener">Book a free consultation</a>
+</div>
+<p class="small">These calculators give estimates for guidance only and are not tax advice. Rates from HMRC's rates and thresholds for employers 2026 to 2027, effective 6 April 2026.</p>
+</main>
+
+<script>
+// ---------- helpers ----------
+const $ = id => document.getElementById(id);
+const num = id => Math.max(0, parseFloat($(id).value) || 0);
+const gbp = (n, dp = 2) => (n < 0 ? "−" : "") + "£" + Math.abs(n).toLocaleString("en-GB", { minimumFractionDigits: dp, maximumFractionDigits: dp });
+const pct = n => isFinite(n) ? n.toFixed(1) + "%" : "–";
+const li = (a, b, cls = "") => `<li class="${cls}"><span>${a}</span><b>${b}</b></li>`;
+function seg(id, cb) {
+  const el = $(id);
+  el.addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    el.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b));
+    cb(b.dataset.v);
+  });
+  return () => el.querySelector('[aria-pressed="true"]').dataset.v;
+}
+
+// ---------- tabs ----------
+const tabs = [...document.querySelectorAll(".tab")];
+function show(t) {
+  tabs.forEach(b => { const on = b.dataset.t === t; b.setAttribute("aria-selected", on); b.tabIndex = on ? 0 : -1; $(b.dataset.t).hidden = !on; });
+}
+tabs.forEach(b => b.addEventListener("click", () => { show(b.dataset.t); history.replaceState(null, "", "#" + b.dataset.t); }));
+show(["vat", "gp", "payroll"].includes(location.hash.slice(1)) ? location.hash.slice(1) : "vat");
+
+// ---------- VAT ----------
+const vatMode = seg("vat-mode", m => { $("vat-amount-lbl").textContent = m === "add" ? "Price excluding VAT" : "Price including VAT"; vat(); });
+function vat() {
+  const amt = num("vat-amount"), r = num("vat-rate") / 100, q = Math.max(1, Math.round(num("vat-qty")) || 1);
+  let net, gross;
+  if (vatMode() === "add") { net = amt; gross = amt * (1 + r); } else { gross = amt; net = amt / (1 + r); }
+  const v = gross - net;
+  $("vat-big").textContent = gbp(v * q);
+  $("vat-sub").textContent = q > 1 ? `${gbp(v)} per item × ${q}` : `at ${r * 100}% VAT`;
+  $("vat-lines").innerHTML =
+    li("Net (excluding VAT)", gbp(net * q)) + li(`VAT at ${r * 100}%`, gbp(v * q)) + li("Gross (including VAT)", gbp(gross * q), "total");
+}
+["vat-amount", "vat-rate", "vat-qty"].forEach(id => $(id).addEventListener("input", vat));
+
+// ---------- GP ----------
+function rate(el, val, goodAt, higherIsGood = true) {
+  if (!isFinite(val)) { el.className = "pill none"; el.textContent = "No sales"; return; }
+  const ok = higherIsGood ? val >= goodAt : val <= goodAt;
+  el.className = "pill " + (ok ? "good" : "watch");
+  el.textContent = ok ? "On target" : "Worth a look";
+}
+function gp() {
+  const k = $("gp-incvat").checked ? 1 / 1.2 : 1;
+  const fs = num("gp-fsales") * k, ds = num("gp-dsales") * k, fc = num("gp-fcost"), dc = num("gp-dcost"), lab = num("gp-labour");
+  const sales = fs + ds, cogs = fc + dc;
+  const fgp = (fs - fc) / fs * 100, dgp = (ds - dc) / ds * 100, agp = (sales - cogs) / sales * 100;
+  const prime = cogs + lab, pp = prime / sales * 100;
+  $("k-food").textContent = pct(fgp); $("k-drink").textContent = pct(dgp); $("k-all").textContent = pct(agp);
+  rate($("p-food"), fgp, 65); rate($("p-drink"), dgp, 70);
+  $("gp-big").textContent = pct(pp);
+  $("gp-sub").textContent = `${gbp(prime, 0)} of ${gbp(sales, 0)} sales`;
+  rate($("gp-pill"), pp, 65, false);
+  const w = x => sales > 0 ? Math.max(0, Math.min(100, x / sales * 100)) : 0;
+  const cw = w(cogs), lw = Math.min(w(lab), 100 - cw);
+  $("gp-bar").innerHTML = `<i style="width:${cw}%;background:var(--navy-light)"></i><i style="width:${lw}%;background:var(--orange)"></i><i style="width:${100 - cw - lw}%;background:var(--teal)"></i>`;
+  $("gp-lines").innerHTML =
+    li("Total sales (ex VAT)", gbp(sales, 0)) + li("Food & drink cost", gbp(cogs, 0)) + li("Gross profit", gbp(sales - cogs, 0)) +
+    li("Labour cost", gbp(lab, 0)) + li("Left after prime cost", gbp(sales - prime, 0), "total");
+}
+["gp-fsales", "gp-fcost", "gp-dsales", "gp-dcost", "gp-labour", "gp-incvat"].forEach(id => $(id).addEventListener("input", gp));
+
+// ---------- Payroll (2026/27, rUK) ----------
+const R = { pa: 12570, basic: 37700, addl: 125140, taper: 100000, pt: 12570, uel: 50270, st: 5000, eeNI: .08, eeNI2: .02, erNI: .15, ea: 10500, qeLo: 6240, qeHi: 50270, eePen: .05, erPen: .03, nlw: 12.71 };
+function incomeTax(taxableIncome) {
+  const pa = Math.max(0, R.pa - Math.max(0, taxableIncome - R.taper) / 2);
+  const t = Math.max(0, taxableIncome - pa);
+  const b = Math.min(t, R.basic), h = Math.min(Math.max(t - R.basic, 0), R.addl - R.basic), a = Math.max(t - R.addl, 0);
+  return b * .2 + h * .4 + a * .45;
+}
+function payroll(gross, pension, ea) {
+  const qe = pension ? Math.max(0, Math.min(gross, R.qeHi) - R.qeLo) : 0;
+  const eePen = qe * R.eePen, erPen = qe * R.erPen;
+  const tax = incomeTax(gross - eePen); // net pay arrangement
+  const eeNI = Math.max(0, Math.min(gross, R.uel) - R.pt) * R.eeNI + Math.max(0, gross - R.uel) * R.eeNI2;
+  const erNIfull = Math.max(0, gross - R.st) * R.erNI;
+  const eaUsed = ea ? Math.min(erNIfull, R.ea) : 0;
+  const erNI = erNIfull - eaUsed;
+  return { gross, tax, eeNI, eePen, take: gross - tax - eeNI - eePen, erNIfull, eaUsed, erNI, erPen, cost: gross + erNI + erPen };
+}
+const payMode = seg("pay-mode", m => { $("pay-hourly").hidden = m !== "hourly"; $("pay-annual").hidden = m !== "annual"; pay(); });
+function pay() {
+  const hourly = payMode() === "hourly";
+  const gross = hourly ? num("pay-rate") * num("pay-hours") * 52 : num("pay-salary");
+  const p = payroll(gross, $("pay-pension").checked, $("pay-ea").checked);
+  const nlwEl = $("pay-nlw");
+  if (hourly) {
+    const r = num("pay-rate");
+    nlwEl.textContent = r < R.nlw ? `Below the £${R.nlw} National Living Wage for workers aged 21+. Check the right rate for this employee's age.` : `Annual pay: ${gbp(gross, 0)} (${num("pay-hours")} hrs × 52 weeks)`;
+    nlwEl.style.color = r < R.nlw ? "var(--warn)" : "";
+  } else nlwEl.textContent = "";
+  $("pay-take").textContent = gbp(p.take, 0); $("pay-take-m").textContent = gbp(p.take / 12) + " a month";
+  $("pay-cost").textContent = gbp(p.cost, 0); $("pay-cost-m").textContent = gbp(p.cost / 12) + " a month";
+  $("pay-lines").innerHTML =
+    li("Gross pay", gbp(p.gross)) +
+    li("Income tax", "− " + gbp(p.tax), "neg") +
+    li("Employee NI (8% / 2%)", "− " + gbp(p.eeNI), "neg") +
+    li("Employee pension (5%)", "− " + gbp(p.eePen), "neg") +
+    li("Take-home pay", gbp(p.take), "total") +
+    li("Employer NI (15% over £5,000)", "+ " + gbp(p.erNIfull)) +
+    (p.eaUsed ? li("Employment Allowance", "− " + gbp(p.eaUsed), "neg") : "") +
+    li("Employer pension (3%)", "+ " + gbp(p.erPen)) +
+    li("Total cost to employer", gbp(p.cost), "total");
+}
+["pay-rate", "pay-hours", "pay-salary", "pay-pension", "pay-ea"].forEach(id => $(id).addEventListener("input", pay));
+
+vat(); gp(); pay();
+</script>
