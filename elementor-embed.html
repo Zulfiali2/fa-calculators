@@ -1,0 +1,275 @@
+<!-- ============================================================
+  F&A Hospitality Calculators — Elementor HTML widget version
+  Paste this WHOLE file into one Elementor "HTML" widget.
+  Everything is scoped to .fac so it won't clash with the theme.
+  Rates: UK 2026/27 (from 6 April 2026). Update the R object below each April.
+============================================================= -->
+<style>
+.fac{--navy:#123560;--navy-dark:#0A1E38;--navy-light:#1C4880;--orange:#E96C20;--orange-hover:#D55D15;--orange-soft:#FFF5EE;--teal:#00B67A;--warn:#C2410C;--bg:#F8FAFC;--surface:#FFFFFF;--ink:#1E293B;--muted:#64748B;--lead:#475569;--border:#E2E8F0;--field:#F8FAFC;
+  --display:"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif;--body:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;--ease:cubic-bezier(.16,1,.3,1);
+  font-family:var(--body);font-size:15px;line-height:1.6;color:var(--ink);text-align:left;max-width:1172px;margin:0 auto}
+.fac *{box-sizing:border-box}
+/* neutralise theme button/input styles */
+.fac button,.fac button:hover,.fac button:focus{border:0;background:none;color:inherit;text-transform:none;letter-spacing:normal;box-shadow:none;margin:0;min-height:0;line-height:1.2;text-decoration:none}
+.fac input,.fac select{margin:0;box-shadow:none;height:auto;line-height:1.3}
+.fac h2{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.6px;margin:0 0 6px;line-height:1.2;color:var(--ink);text-transform:none}
+.fac p{margin:0}
+.fac ul{margin:0}
+
+.fac .fac-tabs{display:flex;gap:6px;background:var(--navy);padding:6px;border-radius:14px;overflow-x:auto;margin-bottom:32px}
+.fac .fac-tab{cursor:pointer;font:600 15px/1 var(--body);padding:14px 20px;border-radius:10px;color:#AFC0D6;white-space:nowrap;flex:1;transition:background .3s var(--ease),color .3s var(--ease)}
+.fac .fac-tab:hover{color:#fff;background:rgba(255,255,255,.1)}
+.fac .fac-tab[aria-selected="true"]{background:#fff;color:var(--navy)}
+.fac button:focus-visible,.fac input:focus-visible,.fac select:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+
+.fac .fac-calc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:32px;align-items:start}
+.fac [hidden]{display:none!important}
+@media (max-width:860px){.fac .fac-calc{grid-template-columns:1fr}}
+.fac .fac-intro{color:var(--lead);margin:0 0 24px;max-width:56ch}
+.fac .fac-fields{display:grid;gap:18px}
+.fac .fac-row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:480px){.fac .fac-row2{grid-template-columns:1fr}}
+.fac label{display:block;font-weight:600;font-size:13.5px;margin:0 0 6px;color:var(--ink)}
+.fac .fac-hint{font-weight:400;color:var(--muted);font-size:12.5px}
+.fac .fac-money{position:relative}
+.fac .fac-money span{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:500;pointer-events:none}
+.fac input[type=number],.fac select{width:100%;font:500 16px var(--body);color:var(--ink);background:var(--field);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-variant-numeric:tabular-nums}
+.fac .fac-money input{padding-left:30px}
+.fac .fac-seg{display:flex;background:var(--field);border:1px solid var(--border);border-radius:10px;padding:4px;gap:4px;flex-wrap:wrap}
+.fac .fac-seg button{flex:1;color:var(--muted);font:600 14px var(--body);padding:9px 10px;border-radius:7px;cursor:pointer;white-space:nowrap}
+.fac .fac-seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(18,53,96,.15)}
+.fac .fac-check{display:flex;gap:10px;align-items:flex-start;font-weight:500;font-size:14px;cursor:pointer}
+.fac .fac-check input{width:18px;height:18px;margin-top:2px;accent-color:var(--orange);flex:none}
+
+.fac .fac-result{background:var(--surface);border:1px solid var(--border);border-radius:18px;box-shadow:0 10px 30px -12px rgba(18,53,96,.18);overflow:hidden}
+.fac .fac-headline{padding:26px 28px 22px;border-bottom:1px solid var(--border)}
+.fac .fac-lbl{font-size:12.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
+.fac .fac-big{font-family:var(--display);font-weight:800;font-size:clamp(34px,6vw,46px);letter-spacing:-1.2px;line-height:1.1;margin-top:6px;font-variant-numeric:tabular-nums;color:var(--navy)}
+.fac .fac-sub{color:var(--lead);font-size:14px;margin-top:4px}
+.fac .fac-lines{list-style:none;padding:10px 28px 18px}
+.fac .fac-lines li{display:flex;justify-content:space-between;gap:16px;padding:10px 0;margin:0;border-bottom:1px dashed var(--border);font-variant-numeric:tabular-nums}
+.fac .fac-lines li:last-child{border-bottom:0}
+.fac .fac-lines li b{font-weight:600}
+.fac .fac-lines li.total{border-top:1px solid var(--ink);border-bottom:0;margin-top:4px;font-weight:700}
+.fac .fac-lines .neg{color:var(--muted)}
+.fac .fac-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--border)}
+.fac .fac-kpi{background:var(--surface);padding:18px 22px}
+.fac .fac-kpi .v{font-family:var(--display);font-weight:800;font-size:28px;letter-spacing:-.6px;font-variant-numeric:tabular-nums;color:var(--navy)}
+.fac .fac-kpi .n{font-size:13px;color:var(--muted);font-weight:500}
+.fac .fac-pill{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;margin-top:6px}
+.fac .fac-pill.good{background:#E6F8F1;color:#00875A}
+.fac .fac-pill.watch{background:#FFEDD5;color:var(--warn)}
+.fac .fac-pill.none{background:var(--field);color:var(--muted)}
+.fac .fac-note{padding:16px 28px 22px;background:var(--orange-soft);font-size:13.5px;color:var(--lead);border-top:1px solid var(--border)}
+.fac .fac-note strong{color:var(--ink)}
+.fac .fac-bar{height:10px;border-radius:999px;background:var(--field);border:1px solid var(--border);overflow:hidden;margin:0 28px 6px;display:flex}
+.fac .fac-bar i{display:block;height:100%}
+.fac .fac-legend{display:flex;flex-wrap:wrap;gap:14px;margin:8px 28px 4px;font-size:12.5px;color:var(--muted)}
+.fac .fac-legend span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;background:var(--c)}
+.fac .fac-small{font-size:12.5px;color:var(--muted);margin-top:24px}
+@media (prefers-reduced-motion:reduce){.fac *{transition:none!important}}
+</style>
+
+<div class="fac" id="fac">
+  <div class="fac-tabs" role="tablist" aria-label="Calculators">
+    <button type="button" class="fac-tab" role="tab" data-t="vat">VAT calculator</button>
+    <button type="button" class="fac-tab" role="tab" data-t="gp">GP% &amp; prime cost</button>
+    <button type="button" class="fac-tab" role="tab" data-t="payroll">Payroll cost</button>
+  </div>
+
+  <!-- VAT -->
+  <section class="fac-calc" data-panel="vat" role="tabpanel">
+    <div>
+      <h2>VAT calculator</h2>
+      <p class="fac-intro">Add VAT to a net price, or take VAT out of a menu price. Hot takeaway food and eat-in sales are 20%; cold takeaway food is usually 0%.</p>
+      <div class="fac-fields">
+        <div><label>What do you want to do?</label>
+          <div class="fac-seg" data-seg="vatmode">
+            <button type="button" data-v="remove" aria-pressed="true">Remove VAT (from gross)</button>
+            <button type="button" data-v="add" aria-pressed="false">Add VAT (to net)</button>
+          </div></div>
+        <div><label for="fac-vat-amount" data-el="vatlbl">Price including VAT</label>
+          <div class="fac-money"><span>£</span><input id="fac-vat-amount" type="number" inputmode="decimal" min="0" step="0.01" value="14.50"></div></div>
+        <div><label for="fac-vat-rate">VAT rate</label>
+          <select id="fac-vat-rate">
+            <option value="20" selected>20% Standard (eat-in, hot takeaway, alcohol)</option>
+            <option value="5">5% Reduced</option>
+            <option value="0">0% Zero (most cold takeaway food)</option>
+          </select></div>
+        <div><label for="fac-vat-qty">Quantity <span class="fac-hint">· e.g. covers or items sold</span></label>
+          <input id="fac-vat-qty" type="number" inputmode="numeric" min="1" step="1" value="1"></div>
+      </div>
+    </div>
+    <div class="fac-result" aria-live="polite">
+      <div class="fac-headline"><div class="fac-lbl">VAT amount</div><div class="fac-big" data-el="vatbig"></div><div class="fac-sub" data-el="vatsub"></div></div>
+      <ul class="fac-lines" data-el="vatlines"></ul>
+      <p class="fac-note"><strong>Tip:</strong> the same burger can carry different VAT. Eaten in, it is 20%. Taken away hot, also 20%. A cold sandwich to take away is usually 0%. Getting the till set up right protects your margin.</p>
+    </div>
+  </section>
+
+  <!-- GP -->
+  <section class="fac-calc" data-panel="gp" role="tabpanel" hidden>
+    <div>
+      <h2>GP% and prime cost</h2>
+      <p class="fac-intro">Enter one week or one month of figures. Use sales excluding VAT, since VAT is not your money.</p>
+      <div class="fac-fields">
+        <div class="fac-row2">
+          <div><label for="fac-fsales">Food sales <span class="fac-hint">ex VAT</span></label><div class="fac-money"><span>£</span><input id="fac-fsales" type="number" inputmode="decimal" min="0" value="18500"></div></div>
+          <div><label for="fac-fcost">Food purchases</label><div class="fac-money"><span>£</span><input id="fac-fcost" type="number" inputmode="decimal" min="0" value="5920"></div></div>
+        </div>
+        <div class="fac-row2">
+          <div><label for="fac-dsales">Drink sales <span class="fac-hint">ex VAT</span></label><div class="fac-money"><span>£</span><input id="fac-dsales" type="number" inputmode="decimal" min="0" value="9200"></div></div>
+          <div><label for="fac-dcost">Drink purchases</label><div class="fac-money"><span>£</span><input id="fac-dcost" type="number" inputmode="decimal" min="0" value="2850"></div></div>
+        </div>
+        <div><label for="fac-labour">Labour cost <span class="fac-hint">· wages, employer NI and pension</span></label><div class="fac-money"><span>£</span><input id="fac-labour" type="number" inputmode="decimal" min="0" value="8900"></div></div>
+        <label class="fac-check"><input type="checkbox" id="fac-incvat"> My sales figures include VAT at 20% (remove it for me)</label>
+      </div>
+    </div>
+    <div class="fac-result" aria-live="polite">
+      <div class="fac-headline"><div class="fac-lbl">Prime cost</div><div class="fac-big" data-el="gpbig"></div><div class="fac-sub" data-el="gpsub"></div><span class="fac-pill none" data-el="gppill"></span></div>
+      <div class="fac-kpis">
+        <div class="fac-kpi"><div class="n">Food GP</div><div class="v" data-el="kfood"></div><span class="fac-pill none" data-el="pfood"></span></div>
+        <div class="fac-kpi"><div class="n">Drink GP</div><div class="v" data-el="kdrink"></div><span class="fac-pill none" data-el="pdrink"></span></div>
+        <div class="fac-kpi"><div class="n">Overall GP</div><div class="v" data-el="kall"></div></div>
+      </div>
+      <div style="padding-top:18px">
+        <div class="fac-bar" data-el="gpbar"></div>
+        <div class="fac-legend"><span style="--c:#1C4880">Food &amp; drink cost</span><span style="--c:#E96C20">Labour</span><span style="--c:#00B67A">Left for rent, bills and profit</span></div>
+      </div>
+      <ul class="fac-lines" data-el="gplines"></ul>
+      <p class="fac-note"><strong>Rule of thumb:</strong> many UK restaurants aim for food GP around 65–70%, drinks around 70% or more, and prime cost under 60–65% of sales. Your targets depend on your concept.</p>
+    </div>
+  </section>
+
+  <!-- Payroll -->
+  <section class="fac-calc" data-panel="payroll" role="tabpanel" hidden>
+    <div>
+      <h2>Payroll cost estimate</h2>
+      <p class="fac-intro">See what an employee takes home and what they really cost you. 2026/27 rates, England, Wales and NI, tax code 1257L.</p>
+      <div class="fac-fields">
+        <div><label>Pay type</label>
+          <div class="fac-seg" data-seg="paymode">
+            <button type="button" data-v="hourly" aria-pressed="true">Hourly</button>
+            <button type="button" data-v="annual" aria-pressed="false">Annual salary</button>
+          </div></div>
+        <div class="fac-row2" data-el="payhourly">
+          <div><label for="fac-rate">Hourly rate</label><div class="fac-money"><span>£</span><input id="fac-rate" type="number" inputmode="decimal" min="0" step="0.01" value="12.71"></div></div>
+          <div><label for="fac-hours">Hours per week</label><input id="fac-hours" type="number" inputmode="decimal" min="0" step="0.5" value="35"></div>
+        </div>
+        <div data-el="payannual" hidden>
+          <label for="fac-salary">Annual salary</label><div class="fac-money"><span>£</span><input id="fac-salary" type="number" inputmode="decimal" min="0" step="100" value="32000"></div>
+        </div>
+        <p class="fac-hint" data-el="paynlw" style="margin-top:-8px"></p>
+        <label class="fac-check"><input type="checkbox" id="fac-pension" checked> Include workplace pension (5% employee, 3% employer, on qualifying earnings)</label>
+        <label class="fac-check"><input type="checkbox" id="fac-ea"> We claim Employment Allowance (up to £10,500 off employer NI a year)</label>
+      </div>
+    </div>
+    <div class="fac-result" aria-live="polite">
+      <div class="fac-kpis">
+        <div class="fac-kpi"><div class="n">Employee takes home</div><div class="v" data-el="paytake"></div><div class="fac-sub" data-el="paytakem"></div></div>
+        <div class="fac-kpi"><div class="n">Total cost to you</div><div class="v" data-el="paycost"></div><div class="fac-sub" data-el="paycostm"></div></div>
+      </div>
+      <ul class="fac-lines" data-el="paylines"></ul>
+      <p class="fac-note"><strong>Estimate only.</strong> Assumes one job, no student loan, no benefits in kind, and pension under a net pay arrangement. Scottish rates differ. Employment Allowance is shared across your whole payroll.</p>
+    </div>
+  </section>
+
+  <p class="fac-small">These calculators give estimates for guidance only and are not tax advice. Rates from HMRC's rates and thresholds for employers 2026 to 2027.</p>
+</div>
+
+<script>
+(function () {
+  var root = document.getElementById("fac"); if (!root) return;
+  var $ = function (id) { return document.getElementById(id); };
+  var el = function (k) { return root.querySelector('[data-el="' + k + '"]'); };
+  var num = function (id) { return Math.max(0, parseFloat($(id).value) || 0); };
+  var gbp = function (n, dp) { dp = dp == null ? 2 : dp; return (n < 0 ? "−" : "") + "£" + Math.abs(n).toLocaleString("en-GB", { minimumFractionDigits: dp, maximumFractionDigits: dp }); };
+  var pct = function (n) { return isFinite(n) ? n.toFixed(1) + "%" : "–"; };
+  var li = function (a, b, cls) { return '<li class="' + (cls || "") + '"><span>' + a + "</span><b>" + b + "</b></li>"; };
+  var on = function (ids, fn) { ids.forEach(function (id) { $(id).addEventListener("input", fn); $(id).addEventListener("change", fn); }); };
+  function seg(name, cb) {
+    var s = root.querySelector('[data-seg="' + name + '"]');
+    s.addEventListener("click", function (e) {
+      var b = e.target.closest("button"); if (!b) return;
+      s.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", x === b); });
+      cb(b.dataset.v);
+    });
+    return function () { return s.querySelector('[aria-pressed="true"]').dataset.v; };
+  }
+
+  // Tabs
+  var tabs = root.querySelectorAll(".fac-tab");
+  function show(t) {
+    tabs.forEach(function (b) { b.setAttribute("aria-selected", b.dataset.t === t); });
+    root.querySelectorAll("[data-panel]").forEach(function (p) { p.hidden = p.dataset.panel !== t; });
+  }
+  tabs.forEach(function (b) { b.addEventListener("click", function () { show(b.dataset.t); }); });
+  var h = location.hash.replace("#", "");
+  show(["vat", "gp", "payroll"].indexOf(h) > -1 ? h : "vat");
+
+  // VAT
+  var vatMode = seg("vatmode", function (m) { el("vatlbl").textContent = m === "add" ? "Price excluding VAT" : "Price including VAT"; vat(); });
+  function vat() {
+    var amt = num("fac-vat-amount"), r = num("fac-vat-rate") / 100, q = Math.max(1, Math.round(num("fac-vat-qty")) || 1), net, gross;
+    if (vatMode() === "add") { net = amt; gross = amt * (1 + r); } else { gross = amt; net = amt / (1 + r); }
+    var v = gross - net;
+    el("vatbig").textContent = gbp(v * q);
+    el("vatsub").textContent = q > 1 ? gbp(v) + " per item × " + q : "at " + r * 100 + "% VAT";
+    el("vatlines").innerHTML = li("Net (excluding VAT)", gbp(net * q)) + li("VAT at " + r * 100 + "%", gbp(v * q)) + li("Gross (including VAT)", gbp(gross * q), "total");
+  }
+  on(["fac-vat-amount", "fac-vat-rate", "fac-vat-qty"], vat);
+
+  // GP
+  function rate(p, val, goal, higherIsGood) {
+    if (!isFinite(val)) { p.className = "fac-pill none"; p.textContent = "No sales"; return; }
+    var ok = higherIsGood ? val >= goal : val <= goal;
+    p.className = "fac-pill " + (ok ? "good" : "watch"); p.textContent = ok ? "On target" : "Worth a look";
+  }
+  function gp() {
+    var k = $("fac-incvat").checked ? 1 / 1.2 : 1;
+    var fs = num("fac-fsales") * k, ds = num("fac-dsales") * k, fc = num("fac-fcost"), dc = num("fac-dcost"), lab = num("fac-labour");
+    var sales = fs + ds, cogs = fc + dc, prime = cogs + lab;
+    var fgp = (fs - fc) / fs * 100, dgp = (ds - dc) / ds * 100, agp = (sales - cogs) / sales * 100, pp = prime / sales * 100;
+    el("kfood").textContent = pct(fgp); el("kdrink").textContent = pct(dgp); el("kall").textContent = pct(agp);
+    rate(el("pfood"), fgp, 65, true); rate(el("pdrink"), dgp, 70, true);
+    el("gpbig").textContent = pct(pp); el("gpsub").textContent = gbp(prime, 0) + " of " + gbp(sales, 0) + " sales";
+    rate(el("gppill"), pp, 65, false);
+    var w = function (x) { return sales > 0 ? Math.max(0, Math.min(100, x / sales * 100)) : 0; };
+    var cw = w(cogs), lw = Math.min(w(lab), 100 - cw);
+    el("gpbar").innerHTML = '<i style="width:' + cw + '%;background:#1C4880"></i><i style="width:' + lw + '%;background:#E96C20"></i><i style="width:' + (100 - cw - lw) + '%;background:#00B67A"></i>';
+    el("gplines").innerHTML = li("Total sales (ex VAT)", gbp(sales, 0)) + li("Food & drink cost", gbp(cogs, 0)) + li("Gross profit", gbp(sales - cogs, 0)) + li("Labour cost", gbp(lab, 0)) + li("Left after prime cost", gbp(sales - prime, 0), "total");
+  }
+  on(["fac-fsales", "fac-fcost", "fac-dsales", "fac-dcost", "fac-labour", "fac-incvat"], gp);
+
+  // Payroll — UK 2026/27 (England, Wales, NI). Update each April.
+  var R = { pa: 12570, basic: 37700, addl: 125140, taper: 100000, pt: 12570, uel: 50270, st: 5000, eeNI: .08, eeNI2: .02, erNI: .15, ea: 10500, qeLo: 6240, qeHi: 50270, eePen: .05, erPen: .03, nlw: 12.71 };
+  function incomeTax(inc) {
+    var pa = Math.max(0, R.pa - Math.max(0, inc - R.taper) / 2), t = Math.max(0, inc - pa);
+    return Math.min(t, R.basic) * .2 + Math.min(Math.max(t - R.basic, 0), R.addl - R.basic) * .4 + Math.max(t - R.addl, 0) * .45;
+  }
+  var payMode = seg("paymode", function (m) { el("payhourly").hidden = m !== "hourly"; el("payannual").hidden = m !== "annual"; pay(); });
+  function pay() {
+    var hourly = payMode() === "hourly";
+    var g = hourly ? num("fac-rate") * num("fac-hours") * 52 : num("fac-salary");
+    var qe = $("fac-pension").checked ? Math.max(0, Math.min(g, R.qeHi) - R.qeLo) : 0;
+    var eePen = qe * R.eePen, erPen = qe * R.erPen, tax = incomeTax(g - eePen);
+    var eeNI = Math.max(0, Math.min(g, R.uel) - R.pt) * R.eeNI + Math.max(0, g - R.uel) * R.eeNI2;
+    var erFull = Math.max(0, g - R.st) * R.erNI, eaUsed = $("fac-ea").checked ? Math.min(erFull, R.ea) : 0;
+    var take = g - tax - eeNI - eePen, cost = g + erFull - eaUsed + erPen;
+    var n = el("paynlw");
+    if (hourly) {
+      var low = num("fac-rate") < R.nlw;
+      n.textContent = low ? "Below the £" + R.nlw + " National Living Wage for workers aged 21+. Check the right rate for this employee's age." : "Annual pay: " + gbp(g, 0) + " (" + num("fac-hours") + " hrs × 52 weeks)";
+      n.style.color = low ? "#C2410C" : "";
+    } else n.textContent = "";
+    el("paytake").textContent = gbp(take, 0); el("paytakem").textContent = gbp(take / 12) + " a month";
+    el("paycost").textContent = gbp(cost, 0); el("paycostm").textContent = gbp(cost / 12) + " a month";
+    el("paylines").innerHTML = li("Gross pay", gbp(g)) + li("Income tax", "− " + gbp(tax), "neg") + li("Employee NI (8% / 2%)", "− " + gbp(eeNI), "neg") +
+      li("Employee pension (5%)", "− " + gbp(eePen), "neg") + li("Take-home pay", gbp(take), "total") + li("Employer NI (15% over £5,000)", "+ " + gbp(erFull)) +
+      (eaUsed ? li("Employment Allowance", "− " + gbp(eaUsed), "neg") : "") + li("Employer pension (3%)", "+ " + gbp(erPen)) + li("Total cost to employer", gbp(cost), "total");
+  }
+  on(["fac-rate", "fac-hours", "fac-salary", "fac-pension", "fac-ea"], pay);
+
+  vat(); gp(); pay();
+})();
+</script>
